@@ -13,7 +13,7 @@ pipeline {
         sh 'mvn clean package -DskipTests'
       }
     }
-    /*
+    
     stage('Create Docker Image') {
       steps {
         echo 'This stage will create a Docker image'
@@ -34,7 +34,6 @@ pipeline {
         sh 'docker push pratibha012/healthcare:1.0'
       }
     }  
-    */
     stage('AWS Login') {
       steps {
         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'awslogin', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
