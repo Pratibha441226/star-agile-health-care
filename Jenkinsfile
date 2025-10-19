@@ -36,33 +36,35 @@ pipeline {
     stage('AWS-Login') {
       steps {
         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'awslogin', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          // AWS credentials will be available for Terraform
         }
       }
     }
-   stage('Setting the Kubernetes Cluster') {
-     steps {
-      dir('terraform_files') {
-       withCredentials([aws(
-        credentialsId: 'awslogin',
-        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-      )]) {
-        sh '''
-          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-          terraform init
-          terraform validate
-          terraform apply --auto-approve
-        '''
+    stage('Setting the Kubernetes Cluster') {
+      steps {
+        dir('terraform_files') {
+          withCredentials([aws(
+            credentialsId: 'awslogin',
+            accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+          )]) {
+            sh '''
+              export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+              export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+              terraform init
+              terraform validate
+              terraform apply --auto-approve
+            '''
+          }
+        }
       }
     }
-  }
-}
     stage('Deploy Kubernetes') {
       steps {
-        sh 'sudo chmod 600 ./terraform_files/mykey.pem'
-        sh 'sudo scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem deployment.yml ubuntu@172.31.13.195:/home/ubuntu/'
-        sh 'sudo scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem service.yml ubuntu@172.31.13.195:/home/ubuntu/'
+        // Removed sudo
+        sh 'chmod 600 ./terraform_files/mykey.pem'
+        sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem deployment.yml ubuntu@172.31.13.195:/home/ubuntu/'
+        sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem service.yml ubuntu@172.31.13.195:/home/ubuntu/'
         script {
           try {
             sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.13.195 kubectl apply -f /home/ubuntu/'
@@ -74,4 +76,3 @@ pipeline {
     }
   }
 }
-
