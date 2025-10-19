@@ -1,8 +1,5 @@
 pipeline {
   agent any
-     tools {
-       maven 'M2_HOME'
-           }
      
   stages {
     stage('Git Checkout') {
@@ -17,16 +14,11 @@ pipeline {
         sh 'mvn package'
                           }
             }
-    stage('Generate Test Report') {
-      steps {
-        echo 'This stage generate Test report using TestNG'
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '/var/lib/jenkins/workspace/Healthcare/target/surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-                          }
-            }
+    
      stage('Create Docker Image') {
       steps {
         echo 'This stage will Create a Docker image'
-        sh 'docker build -t cbabu85/healthcare:1.0 .'
+        sh 'docker build -t pratibha012/healthcare:1.0 .'
                           }
             }
      stage('Login to Dockerhub') {
@@ -40,7 +32,7 @@ pipeline {
     stage('Docker Push-Image') {
       steps {
         echo 'This stage will push my new image to the dockerhub'
-        sh 'docker push cbabu85/healthcare:1.0'
+        sh 'docker push pratibha012/healthcare:1.0'
             }
       }
     stage('AWS-Login') {
@@ -61,7 +53,7 @@ pipeline {
         }
       }
     }
-    stage('Terraform destroy & apply for test workspace') {
+   /* stage('Terraform destroy & apply for test workspace') {
       steps {
         sh 'terraform apply -auto-approve'
       }
@@ -111,7 +103,7 @@ pipeline {
         sh 'kubectl apply -f app-deploy.yml'
         sh 'kubectl get svc'
       }
-    }
+    }   */
   }
 }
  
