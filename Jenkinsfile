@@ -5,7 +5,7 @@ pipeline {
     stage('Git Checkout') {
       steps {
         echo 'This stage is to clone the repo from github'
-        git branch: 'master', url: ''
+        git branch: 'master', url: 'https://github.com/Pratibha441226/star-agile-health-care.git'
                         }
             }
     stage('Create Package') {
@@ -51,6 +51,21 @@ pipeline {
         }
       }
     } 
+    stage('deploy kubernetes')
+    steps{
+      sh 'sudo chmod 600 ./terraform_files/mykey.pem'
+      sh 'sudo scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem deployment.yml ubuntu@172.31.30.101:/home/ubuntu/'
+      sh 'sudo scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem service.yml ubuntu@172.31.30.101:/home/ubuntu/'
+    script{
+      try{
+        sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.30.101 kubectl apply -f .'
+      }catch(error)
+      {
+        sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.30.101 kubectl apply -f .'
+      }
+    }
+    }   
   }
 }
+
  
