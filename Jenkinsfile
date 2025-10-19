@@ -35,7 +35,7 @@ pipeline {
         sh 'docker push pratibha012/healthcare:1.0'
             }
       }
-    stage('AWS-Login') {
+    /* stage('AWS-Login') {
       steps {
         withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'Awsaccess', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
          }
@@ -64,7 +64,7 @@ pipeline {
         sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.30.101 kubectl apply -f .'
       }
     }
-    }   
+    }   /*
   }
 }
 
