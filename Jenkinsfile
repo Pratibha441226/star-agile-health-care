@@ -61,9 +61,9 @@ pipeline {
         sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem service.yml ubuntu@172.31.13.195:/home/ubuntu/'
         script {
           try {
-            sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.13.195 kubectl apply -f /home/ubuntu/'
+            sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.13.195 /usr/local/bin/kubectl apply -f /home/ubuntu/'
           } catch (error) {
-            sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.13.195 kubectl apply -f /home/ubuntu/'
+            sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.13.195 /usr/local/bin/kubectl apply -f /home/ubuntu/'
           }
         }
       }
