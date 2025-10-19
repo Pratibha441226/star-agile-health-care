@@ -54,6 +54,7 @@ pipeline {
           sh 'terraform validate'
           sh 'terraform apply --auto-approve'
           sh 'sleep 20'
+          '''
       }
     }
   }
