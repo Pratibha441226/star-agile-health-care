@@ -16,14 +16,14 @@ pipeline {
       }
     }
     
-/*    stage('Create Docker Image') {
+//    stage('Create Docker Image') {
       steps {
         echo 'This stage will create a Docker image'
         sh 'docker build -t pratibha012/healthcare:1.0 .'
       }
     }
 
-    stage('Login to Dockerhub') {
+  //  stage('Login to Dockerhub') {
       steps {
         echo 'This stage will log in to Docker Hub'
         withCredentials([usernamePassword(credentialsId: 'dockercreds', passwordVariable: 'dockerpass', usernameVariable: 'dockeruser')]) {
@@ -32,12 +32,12 @@ pipeline {
       }
     }
 
-    stage('Docker Push-Image') {
+   // stage('Docker Push-Image') {
       steps {
         echo 'This stage will push my new image to Docker Hub'
         sh 'docker push pratibha012/healthcare:1.0'
       }
-    }    */
+    }    
 
     
     stage('AWS-Login') {
