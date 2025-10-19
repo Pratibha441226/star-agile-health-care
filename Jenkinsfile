@@ -39,19 +39,25 @@ pipeline {
         }
       }
     }
-
-
-    stage('Setting the Kubernetes Cluster') {
-      steps {
-        dir('terraform_files') {
-          sh 'terraform init'
-          sh 'terraform validate'
-          sh 'terraform apply --auto-approve'
-          sh 'sleep 20'
-        }
+   stage('Setting the Kubernetes Cluster') {
+     steps {
+      dir('terraform_files') {
+       withCredentials([aws(
+        credentialsId: 'awslogin',
+        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+      )]) {
+        sh '''
+          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+          terraform init
+          terraform validate
+          terraform apply --auto-approve
+        '''
       }
-    } 
-
+    }
+  }
+}
     stage('Deploy Kubernetes') {
       steps {
         sh 'sudo chmod 600 ./terraform_files/mykey.pem'
