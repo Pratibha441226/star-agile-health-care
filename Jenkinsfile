@@ -50,17 +50,19 @@ pipeline {
         sh '''
           export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
           export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-          terraform init
-          terraform validate
-          terraform apply --auto-approve
-        '''
+          sh 'terraform init'
+          sh 'terraform validate'
+          sh 'terraform apply --auto-approve'
+          sh 'sleep 20'
       }
     }
   }
 }
     stage('deploy kubernetes') {
       steps {
-        sh 'chmod 600 ./terraform_files/mykey.pem'
+        sh 'chmod 600 ./terraform_files/mykey.pem' 
+        sh 'minikube start'
+        sh 'sleep 20'
         sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem deployment.yml ubuntu@172.31.13.195:/home/ubuntu/'
         sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem service.yml ubuntu@172.31.13.195:/home/ubuntu/'
         script {
