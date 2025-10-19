@@ -63,13 +63,13 @@ pipeline {
         sh 'chmod 600 ./terraform_files/mykey.pem' 
         sh 'minikube start'
         sh 'sleep 20'
-        sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem deployment.yml ubuntu@172.31.13.195:/root/'
-        sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem service.yml ubuntu@172.31.13.195:/root/'
+        sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem deployment.yml root@172.31.13.195:/root/'
+        sh 'scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem service.yml root@172.31.13.195:/root/'
         script {
           try {
-         sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.13.195 kubectl apply -f /root/'
+         sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem root@172.31.13.195 kubectl apply -f /root/'
           } catch (error) {
-         sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.13.195 kubectl apply -f /root/'
+         sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem root@172.31.13.195 kubectl apply -f /root/'
 
           }
         }
