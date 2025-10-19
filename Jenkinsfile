@@ -47,14 +47,17 @@ pipeline {
         accessKeyVariable: 'AWS_ACCESS_KEY_ID',
         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
       )]) {
-        sh '''
-          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+   stage('Setting the Kubernetes Cluster') {
+      steps {
+        dir('terraform_files') {
           sh 'terraform init'
           sh 'terraform validate'
           sh 'terraform apply --auto-approve'
           sh 'sleep 20'
-          '''
+        }
+      }
+    }
+
       }
     }
   }
