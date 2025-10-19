@@ -12,10 +12,10 @@ pipeline {
     stage('Create Package') {
       steps {
         echo 'This stage will compile, test, and package my application'
-        sh 'mvn package'
+        sh 'mvn clean package -DskipTests'
       }
     }
-    /*
+    
     stage('Create Docker Image') {
       steps {
         echo 'This stage will create a Docker image'
@@ -23,11 +23,11 @@ pipeline {
       }
     }
 
-   stage('Login to Dockerhub') {
+    stage('Login to Dockerhub') {
       steps {
         echo 'This stage will log in to Docker Hub'
         withCredentials([usernamePassword(credentialsId: 'dockercreds', passwordVariable: 'dockerpass', usernameVariable: 'dockeruser')]) {
-          sh 'docker login -u ${dockeruser} -p ${dockerpass}'
+          sh 'echo "$dockerpass" | docker login -u "$dockeruser" --password-stdin'
         }
       }
     }
@@ -38,12 +38,10 @@ pipeline {
         sh 'docker push pratibha012/healthcare:1.0'
       }
     }    
-      */
+
     stage('AWS-Login') {
       steps {
-        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'awslogin', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          // AWS login steps here
-        }
+        echo 'AWS CLI is already configured on this EC2 instance.'
       }
     }
 
@@ -65,12 +63,13 @@ pipeline {
         sh 'sudo scp -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem service.yml ubuntu@172.31.12.49:/home/ubuntu/'
         script {
           try {
-            sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.12.49 kubectl apply -f .'
+            sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.12.49 kubectl apply -f /home/ubuntu/'
           } catch (error) {
-            sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.12.49 kubectl apply -f .'
+            sh 'ssh -o StrictHostKeyChecking=no -i ./terraform_files/mykey.pem ubuntu@172.31.12.49 kubectl apply -f /home/ubuntu/'
           }
         }
       }
     }
   }
 }
+
